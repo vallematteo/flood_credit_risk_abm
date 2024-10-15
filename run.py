@@ -36,8 +36,8 @@ paths = ['grote.png', 'middel.png', 'kleine.png', 'extreme_kleine.png', 'nvm_cle
 def read_map(FOLDER, path):
     path = FOLDER + '/' + path
     map = Image.open(path)
-    map = np.array(map.convert("L"))
-    for i in range(map.shape[0]):
+    map = np.array(map.convert("L")) # convert to grayscale
+    for i in range(map.shape[0]): # invert the color
         for j in range(map.shape[1]):
             map[i][j] = 255-map[i][j]
     # normalization
