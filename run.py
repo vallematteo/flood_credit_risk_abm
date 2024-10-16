@@ -1,4 +1,4 @@
-import pandas as pd
+import pandas as pd 
 import matplotlib.pyplot as plt
 import numpy as np
 from fitter import Fitter, get_common_distributions
