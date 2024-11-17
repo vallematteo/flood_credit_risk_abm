@@ -97,7 +97,7 @@ def main(tot_step, grid_radius, acpt_score, folder, settings, repeats, add_agent
     # # res_gev_list = list(set0[0:300]) + list(gev_list[301:700]) 
 
     # Create and run the model
-    model = ESGMotgageModel(width, height, nvm, m_fgrote, m_fmiddel, m_fklein, m_feklein, binary_map , grid_radius, acpt_score, res_gev_list)
+    model = ESGMotgageModel(width, height, nvm, m_fgrote, m_fmiddel, m_fklein, m_feklein, binary_map , grid_radius, acpt_score, res_gev_list) #binary map is i obtained from nvm_cleaned
     
     model.add_agent_controller = add_agents
     print(f'add new agents: {model.add_agent_controller}')
@@ -106,7 +106,7 @@ def main(tot_step, grid_radius, acpt_score, folder, settings, repeats, add_agent
     # model.a = a_set[settings]
     # model.k = k_set[settings]
    
-    model.num_agents = 1.2
+    model.num_agents = 1.2         #1200 agents ??
     print(f'setting {settings}')
     # print(f'GEV params: b={model.b}, a = {model.a}, k = {model.k}')
     print(f'total number of agents: {model.tot_num_agents}')
