@@ -1,18 +1,21 @@
 ## Notes Matteo
-
+folder
 cd /Users/matteovalle/Documents/GitHub/vallematteo.github.io/vallematteo.github.io/flood_credit_risk_abm
 
 
-TO RUN THE MODEL:
-run.py --tot_step 10 --grid_radius 50 --acpt_score 200 --folder 'output/test' --settings 2 --repeats 3 --add_agents
+TO ADD agents during the run:\
+run.py --tot_step 10 --grid_radius 50 --acpt_score 200 --folder 'output/test1' --settings 2 --repeats 3
 
-run.py --tot_step 10 --grid_radius 50 --acpt_score 200 --folder 'output/test' --settings 2 --repeats 3  #if you don't want agents
+TO NOT ADD new agents during the run:\
+run.py --tot_step 10 --grid_radius 50 --acpt_score 200 --folder 'output/test1' --settings 2 --repeats 3 --add_agents 
+To ensure that new agents are not added during the simulation, you need to set the --add_agents parameter to False
 
-### Unresolved issues
--  s_i: unclear the function: is the shere of income coefficient that remain unspent. also s_i or s_i(I_d) ?? unclear notation
-- 'gev_config3.csv' is missing for new agents
-- acpt_score unclear what is the function of this parameter
-- also in model.py it seems i need two files for the KDE. stored in folder preparation:  ['kde_model_3d.joblib', 'kde_model_nvm.joblib'] line 32 model.py
+### Issues
+-  s_i: unclear the function: is the shere of income coefficient that remain unspent. also s_i or s_i(I_d) ?? unclear notation in the pdf
+- acpt_score unclear what is the function of this parameter. IT'S THE ACCEPTANCE SCORE FROM THE BANK SIDE
+### Not clear yet
+
+
 
 
 your_project/
@@ -24,3 +27,12 @@ your_project/
 │   		└── ESGMotgageModel.py
 └── output/
     		└── test/
+
+
+
+### Meeting 29 nov 2024
+- check the random generation of the GEV. I can Set it, but we don't know if she set anything.
+- check the bandwidth for the violin plot
+- check the kde for income generation
+- default threshold has effect on the plots??
+

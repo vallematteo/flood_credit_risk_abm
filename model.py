@@ -61,8 +61,9 @@ class ESGMotgageModel(Model):
         self.num_default = 0
         self.num_mature = 0
         self.num_new_join = 0
-        self.num_step = 0
-
+        #self.num_step = 0
+        self._steps = 0
+        self._time = 0
         # save map
         self.density_map = density_map
         self.m_fgrote = m_fgrote
@@ -166,10 +167,10 @@ class ESGMotgageModel(Model):
 
         if new_join == False:
             # income, job_since, ratio cap respectively
-            income, seniority, r_cap = ing_kde.sample(1)[0]
+            seniority, r_cap = ing_kde.sample(1)[0] #SHOULD OUTPUT 3 D VALUES (only two) (income comes from the burr below)
             v, sp = nvm_kde.sample(1)[0]
             v *= 1000 # from keuro to euro
-            # income = burr.rvs(c=3.30, d=0.45, loc=-12.76, scale=3101.46)
+            income = burr.rvs(c=3.30, d=0.45, loc=-12.76, scale=3101.46) #substitute the kde
             # expenditure is computed from the share of the income
             share_income = 2.7/(1+0.85*income)+0.3
             expenditure = share_income * income
@@ -179,10 +180,10 @@ class ESGMotgageModel(Model):
         else:        
             # while True:
             #     income, seniority, r_cap = ing_kde.sample(1)[0]
-            #     # income = burr.rvs(c=3.30, d=0.45, loc=-12.76, scale=3101.46)
+            income = burr.rvs(c=3.30, d=0.45, loc=-12.76, scale=3101.46)
             #     if income >= 1000:
             #         break
-            income, seniority, r_cap = ing_kde.sample(1)[0]
+            seniority, r_cap = ing_kde.sample(1)[0]
             # expenditure is computed from the share of the income
             share_income = 2.7/(1+0.85*income)+0.3
             expenditure = share_income * income
@@ -333,7 +334,7 @@ class ESGMotgageModel(Model):
                 self.num_default += 1
                 self.schedule.remove(agent)
                 self.grid.remove_agent(agent)
-                agent_info = {'step': self.num_step,
+                agent_info = {'step': self._steps,
                               'id': agent.unique_id,
                               'score': agent.score,
                            'x':agent.x,
@@ -360,7 +361,7 @@ class ESGMotgageModel(Model):
                 self.num_mature += 1
                 self.schedule.remove(agent)
                 self.grid.remove_agent(agent)
-                agent_info = {'step': self.num_step,
+                agent_info = {'step': self._steps,
                               'id': agent.unique_id,
                               'score': agent.score,
                            'x':agent.x,
@@ -410,7 +411,8 @@ class ESGMotgageModel(Model):
     def step(self):
         # generate GEV flood
         # self.gev = self.gev_flood_occur()
-        self.gev = self.gev_list[self.num_step]
+        self.gev = self.gev_list[self._steps]
+        
         # update employment rate, income shock
         if self.gev >0:
             self.r_e = 0.1 + np.tanh(self.gev / 100) * self.beta
@@ -430,12 +432,12 @@ class ESGMotgageModel(Model):
         self.remove_agent()
         
         
-        self.num_step += 1
+        self._steps += 1
         
         # add data collector
         # all_v = [agent.v for agent in self.schedule.agents]
         # print(f"avg housing price: {np.mean(all_v)}")
-        print(f'epoch = {self.num_step}')
+        print(f'epoch = {self._steps}')
         # employed = [agent.s_e for agent in self.schedule.agents]
         # defaulted = [agent.s_d for agent in self.schedule.agents]
         # utility = [agent.u for agent in self.schedule.agents]

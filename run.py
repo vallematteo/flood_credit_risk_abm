@@ -71,13 +71,14 @@ print(f'width: {width}, height: {height}')
 
 def main(tot_step, grid_radius, acpt_score, folder, settings, repeats, add_agents):
     
-    if add_agents == True:
+    if add_agents == True: # add new agents during the run
         # this file contains 1500 numbers/setting
         GEV_df = pd.read_csv(FOLDER+ '/' + 'gev_config3.csv')
         # this file contains 1000 numbers/setting
         # GEV_df = pd.read_csv(FOLDER+ '/' + 'gev_config.csv')
     else:
-        GEV_df = pd.read_csv(FOLDER+ '/' + 'gev_config2.csv')
+        #GEV_df = pd.read_csv(FOLDER+ '/' + 'gev_config2.csv')
+        GEV_df = pd.read_csv(FOLDER+ '/' + 'gev_config3.csv') #temporary
         
     # ORIGINAL:
     res_gev_list = GEV_df['set'+str(settings)]
@@ -108,19 +109,21 @@ def main(tot_step, grid_radius, acpt_score, folder, settings, repeats, add_agent
     # model.a = a_set[settings]
     # model.k = k_set[settings]
    
-    model.num_agents = 1.2         #1200 agents ??
+    model.num_agents = 1.2         #1200 agents roughly
     print(f'setting {settings}')
     # print(f'GEV params: b={model.b}, a = {model.a}, k = {model.k}')
     print(f'total number of agents: {model.tot_num_agents}')
 
-    # Run the model for a certain number of steps
+
+    ################ RUN THE MODEL ################
+    # Run the model for a certain number of steps 
     for _ in range(tot_step):
         # for MV process, break if all agents are removed (without adding agents to the system)
         if model.tot_num_agents <= 0:
             break
         model.step()
         
-    # save the resultes
+    ################ PRINT THE RESULTS OF THE MODEL ################
     save_path = ROOT_DIR + '/' +  folder
     if Path(save_path).is_dir()==False:
         os.mkdir(save_path)
@@ -128,11 +131,9 @@ def main(tot_step, grid_radius, acpt_score, folder, settings, repeats, add_agent
     model_output.to_csv(save_path +f'/model_output_score{acpt_score}_r{grid_radius}_set{settings}_{count}.csv')
     agents_output = model.datacollector.get_agent_vars_dataframe()
     agents_output.to_csv(save_path +f'/agents_output_score{acpt_score}_r{grid_radius}_set{settings}_{count}.csv')
-
     # dict1 = {'default_score': model.failures}
     # df = pd.DataFrame(dict1)
     model.failures.to_csv(save_path +f'/default_score{acpt_score}_r{grid_radius}_set{settings}_{count}.csv')
-
     # dict2 = {'mature_score': model.matures}
     # df = pd.DataFrame(dict2)
     model.matures.to_csv(save_path+f'/mature_score{acpt_score}_r{grid_radius}_set{settings}_{count}.csv')
@@ -148,7 +149,7 @@ def main(tot_step, grid_radius, acpt_score, folder, settings, repeats, add_agent
 # plt.show()
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser() #for command line arguments proper handling
     parser.add_argument('--tot_step', default=1, type=int,
                         help='simulation time step')
     parser.add_argument('--grid_radius', default=30, type=int,
@@ -165,11 +166,12 @@ if __name__ == '__main__':
                         help='Default: add new agents, with this action, can test without adding new agents')
     # parser.add_argument('--no_flood', action='store_true',
     #                     help='Default: create flood events. in conparison, put this no flood situation where completely no flood happens. ')
-
     args = parser.parse_args()
     kwargs = vars(args)
     # kargs returns a dict:{var name: var value}
-    # print(kwargs['repeats'])
-
+    
+    
+    ################ CALL THE FUNCTION MAIN 'repeats' TIMES ################
+    #10 to derive the plots for the paper
     for count in range(kwargs['repeats']):
         main(**kwargs)
