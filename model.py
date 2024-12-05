@@ -140,8 +140,8 @@ class ESGMotgageModel(Model):
                            'r_inst': 'r_inst',
                            'v':'v',
                            'c':'c',
-                           'v_arr':'v_arr'
-                           }
+                           'v_arr':'v_arr',
+                           'delta_price': 'delta_price'}
         # r_cap, income, seniority,expenditure, fund, ltv, install, v, sp, tm
         self.datacollector = DataCollector(
             model_reporters=model_reporters, 
@@ -412,10 +412,12 @@ class ESGMotgageModel(Model):
         # generate GEV flood
         # self.gev = self.gev_flood_occur()
         self.gev = self.gev_list[self._steps]
+        print(f'self gev: {self.gev}')
         
         # update employment rate, income shock
+        ##############     Unemployment rate is global variable   ##############
         if self.gev >0:
-            self.r_e = 0.1 + np.tanh(self.gev / 100) * self.beta
+            self.r_e = 0.1 + np.tanh(self.gev / 100) * self.beta #beta is 0.1
         else:
             self.r_e = 0.1
         print(f'rate of unemployment: {self.r_e}')
@@ -450,6 +452,7 @@ class ESGMotgageModel(Model):
         print(f"tot_a={self.tot_num_agents}, tot_his={self.tot_num_agents_his}, num_default={self.num_default}, num_mature={self.num_mature}, num_new={self.num_new_join}")
         # print(self.gev, self.epsilon)
 
-        self.datacollector.collect(self)
+        self.datacollector.collect(self)        
+        #The step() method of each agent is called here (updates the agent's state)
         self.schedule.step()
         

@@ -82,6 +82,7 @@ class Household(Agent):
     
     def update_s_d(self):
         """update default status"""
+        
         share_income = self.share_income()
         # hard margin
         if self.s_d == 0 and self.fund - max(share_income * self.income, 500) <= self.install:
@@ -92,7 +93,7 @@ class Household(Agent):
         x = (self.install * self.tm + self.model.alpha) / (self.income + self.model.alpha) * (self.model.beta3*(1-self.s_e)*self.tue + 1)
         p_wtp = self.model.beta1 * self.u -self.model.beta2 * self.sigmoid(x)
         # p_wtp = self.model.beta1 * u
-        rv = np.abs(np.random.normal(0, self.model.std_stp))
+        rv = np.abs(np.random.normal(0, self.model.std_stp)) #why we generate a new rv? ################### unclear ################ std_stp is set to 0.5 in model.py
         # rv = 0.05
         if self.s_d == 0 and p_wtp < rv:
             self.s_d = 1
@@ -195,15 +196,16 @@ class Household(Agent):
         # update score
         self.score = score
     
-    def find_flood_map(self):
+    def find_flood_map(self): #rename it to find_flood_risk
         """find the respective flood risk map data for agents"""
+        #Figure 3.7 of the pdf
         gev = self.model.gev
         # flood impact
         # given a GEV number --> return period number --> how severe the flood is 
         if 0 < gev <= 30:
             # grote kans overstroming
             self.f_d = self.fgrote
-        elif 30< gev <= 300:
+        elif 30 < gev <= 300:
             # mid-grote kans
             self.f_d = self.fmiddel
         elif 300 < gev <=3000:
@@ -217,7 +219,7 @@ class Household(Agent):
         # make gev and f_r(t) global
         
         # find f_r
-        # f_r = self.model.f_r
+        # f_r = self.model.f_r 
 
         # if gev > 0: # if second round flood happens
         #     self.f = 0.7 * self.f + 0.3 * self.f_d
@@ -225,6 +227,8 @@ class Household(Agent):
         # else:
         #     self.f = self.f * 0.8
         #     # self.f = self.f_d * ( 1 - f_r )
+        
+        #formula 3.19 r_recov = 0.3
         self.f = 0.3 * self.f + 0.5 * self.f_d
     
     def update(self):

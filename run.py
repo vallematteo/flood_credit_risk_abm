@@ -22,6 +22,7 @@ from scipy.stats import genextreme
 
 from agents import Household
 from model import ESGMotgageModel
+#from model2 import ESGMotgageModel
 import argparse
 from pathlib import Path
 from config import b_set, a_set, k_set
@@ -78,7 +79,7 @@ def main(tot_step, grid_radius, acpt_score, folder, settings, repeats, add_agent
         # GEV_df = pd.read_csv(FOLDER+ '/' + 'gev_config.csv')
     else:
         #GEV_df = pd.read_csv(FOLDER+ '/' + 'gev_config2.csv')
-        GEV_df = pd.read_csv(FOLDER+ '/' + 'gev_config3.csv') #temporary
+        GEV_df = pd.read_csv(FOLDER+ '/' + 'gev_config3.csv') #temporary modified to 3
         
     # ORIGINAL:
     res_gev_list = GEV_df['set'+str(settings)]
