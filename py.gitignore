@@ -1,0 +1,6 @@
+# Ignore the entire output folder
+/output/
+
+# Other files and folders to ignore
+__pycache__/
+.env
