@@ -161,29 +161,34 @@ class ESGMotgageModel(Model):
 
         ltv = np.abs(np.random.normal(0.57, 0.1))
         # sp = burr.rvs(c=2.20, d=3.00, loc=-0.63, scale=146.68)
-        # r_cap = burr.rvs(c=9.42, d=0.14, loc=-0.11, scale=73.40)
+        
+        #might be the correct formulation for r_cap 
+        r_cap = burr.rvs(c=9.42, d=0.14, loc=-0.11, scale=73.40)
         
 
 
         if new_join == False:
             # income, job_since, ratio cap respectively
-            seniority, r_cap = ing_kde.sample(1)[0] #SHOULD OUTPUT 3 D VALUES (only two) (income comes from the burr below)
+            #seniority, r_cap = ing_kde.sample(1)[0] #SHOULD OUTPUT 3 D VALUES (only two) (income comes from the burr below)
+            income, seniority = ing_kde.sample(1)[0]
             v, sp = nvm_kde.sample(1)[0]
             v *= 1000 # from keuro to euro
-            income = burr.rvs(c=3.30, d=0.45, loc=-12.76, scale=3101.46) #substitute the kde
+            #income = burr.rvs(c=3.30, d=0.45, loc=-12.76, scale=3101.46) #substitute the kde
+            
             # expenditure is computed from the share of the income
             share_income = 2.7/(1+0.85*income)+0.3
             expenditure = share_income * income
             # v = burr.rvs(c=3.38, d=0.92, loc=-1.34, scale=195.25) * 1000 # unit: euro
+            
             tm = np.random.uniform(1, 120)
             install = ltv * v / tm
         else:        
-            # while True:
-            #     income, seniority, r_cap = ing_kde.sample(1)[0]
+            #income, seniority, r_cap = ing_kde.sample(1)[0]
             income = burr.rvs(c=3.30, d=0.45, loc=-12.76, scale=3101.46)
-            #     if income >= 1000:
-            #         break
-            seniority, r_cap = ing_kde.sample(1)[0]
+           
+            #seniority, r_cap = ing_kde.sample(1)[0]
+            income, seniority = ing_kde.sample(1)[0]
+            
             # expenditure is computed from the share of the income
             share_income = 2.7/(1+0.85*income)+0.3
             expenditure = share_income * income
@@ -196,9 +201,7 @@ class ESGMotgageModel(Model):
             v = mortgage_amount / ltv
             sp = burr.rvs(c=2.20, d=3.00, loc=-0.63, scale=146.68)
             
-        
         fund = r_cap * tm * install
-        
         return fgrote, fmiddel, fklein, feklein, r_cap, income, seniority,expenditure, fund, ltv, install, v, sp, tm
 
 
