@@ -197,7 +197,7 @@ class ESGMotgageModel(Model):
                 num_agents_at_location = num_agents_matrix[x, y]
 
                 if num_agents_at_location > 0:
-                    # Vectorized initialization of agents
+                    # Vectorized   of agents
                     for _ in range(num_agents_at_location):
                         args = self.init_agent(x, y, new_join=False)
                         agent = Household(unique_id, self, x, y, *args)

@@ -30,7 +30,7 @@ random.seed(42)
 FOLDER = 'preparation'
 # load kernel
 paths = ['kde_model_3d.joblib', 'kde_model_nvm.joblib']
-ing_kde = joblib.load(FOLDER + '/' + paths[0])
+#ing_kde = joblib.load(FOLDER + '/' + paths[0])
 nvm_kde = joblib.load(FOLDER + '/' + paths[1])
 
 class ESGMotgageModel(Model):
@@ -48,6 +48,7 @@ class ESGMotgageModel(Model):
             acpt_score,
             gev_list):
         
+        super().__init__() 
         self.add_agent_controller = True
         self.remove_thresh = 12
 
@@ -156,50 +157,45 @@ class ESGMotgageModel(Model):
         fmiddel = self.m_fmiddel[x,y]
         fklein = self.m_fklein[x,y]
         feklein = self.m_feklein[x,y]
-
-        # seniority = np.floor(np.random.beta(a=0.88, b=2.79) * 606.34 + 1.0)
-
         ltv = np.abs(np.random.normal(0.57, 0.1))
-        # sp = burr.rvs(c=2.20, d=3.00, loc=-0.63, scale=146.68)
-        
-        #might be the correct formulation for r_cap 
-        r_cap = burr.rvs(c=9.42, d=0.14, loc=-0.11, scale=73.40)
-        
-
 
         if new_join == False:
-            # income, job_since, ratio cap respectively
+            #old
             #seniority, r_cap = ing_kde.sample(1)[0] #SHOULD OUTPUT 3 D VALUES (only two) (income comes from the burr below)
-            income, seniority = ing_kde.sample(1)[0]
+            #income, seniority = ing_kde.sample(1)[0]
+            #seniority, income = ing_kde.sample(1)[0]
+            # v = burr.rvs(c=3.38, d=0.92, loc=-1.34, scale=195.25) * 1000 # unit: euro
+            #new
+            income = burr.rvs(c=3.30, d=0.45, loc=-12.76, scale=3101.46)
+            r_cap = burr.rvs(c=9.42, d=0.14, loc=-0.11, scale=73.40)
+            seniority = np.random.beta(a=0.88, b=2.79) * 606.34 + 1.0
             v, sp = nvm_kde.sample(1)[0]
             v *= 1000 # from keuro to euro
-            #income = burr.rvs(c=3.30, d=0.45, loc=-12.76, scale=3101.46) #substitute the kde
-            
             # expenditure is computed from the share of the income
             share_income = 2.7/(1+0.85*income)+0.3
             expenditure = share_income * income
-            # v = burr.rvs(c=3.38, d=0.92, loc=-1.34, scale=195.25) * 1000 # unit: euro
+            
             
             tm = np.random.uniform(1, 120)
             install = ltv * v / tm
-        else:        
-            #income, seniority, r_cap = ing_kde.sample(1)[0]
-            income = burr.rvs(c=3.30, d=0.45, loc=-12.76, scale=3101.46)
-           
+        else:       
+            #old
             #seniority, r_cap = ing_kde.sample(1)[0]
-            income, seniority = ing_kde.sample(1)[0]
-            
+            #income, seniority = ing_kde.sample(1)[0]
+            #new
+            income = burr.rvs(c=3.30, d=0.45, loc=-12.76, scale=3101.46)
+            seniority = np.random.beta(a=0.88, b=2.79) * 606.34 + 1.0           
+            r_cap = burr.rvs(c=9.42, d=0.14, loc=-0.11, scale=73.40)
             # expenditure is computed from the share of the income
             share_income = 2.7/(1+0.85*income)+0.3
             expenditure = share_income * income
+            sp = burr.rvs(c=2.20, d=3.00, loc=-0.63, scale=146.68) #unsure abt this
+            ##### different param initialization for newly joining agents #####
             tm = 120
-            mortgage_amount = 4 * 12 * income
+            mortgage_amount = 4 * 12 * income # mortgage_amount = A_M
             ri = np.random.normal(self.mu_i, self.std_i) # annually interest rate
             install = calculate_emi(mortgage_amount, ri, loan_tenure_years = 10)
-            # coeff_ri = ri * (1+ri)**480 / ((1+ri)**480 - 1)
-            # install = mortgage_amount * coeff_ri
             v = mortgage_amount / ltv
-            sp = burr.rvs(c=2.20, d=3.00, loc=-0.63, scale=146.68)
             
         fund = r_cap * tm * install
         return fgrote, fmiddel, fklein, feklein, r_cap, income, seniority,expenditure, fund, ltv, install, v, sp, tm
@@ -419,7 +415,7 @@ class ESGMotgageModel(Model):
         
         # update employment rate, income shock
         ##############     Unemployment rate is global variable   ##############
-        if self.gev >0:
+        if self.gev > 0:
             self.r_e = 0.1 + np.tanh(self.gev / 100) * self.beta #beta is 0.1
         else:
             self.r_e = 0.1
@@ -452,10 +448,9 @@ class ESGMotgageModel(Model):
         # print(f'score card: mean = {mean}, std = {std}.')
         # scores = [agent.score for agent in self.schedule.agents]
         # print(f'scores: Q1={np.percentile(scores, 25)}, Q2={np.percentile(scores, 50)}, Q3={np.percentile(scores, 75)}')
-        print(f"tot_a={self.tot_num_agents}, tot_his={self.tot_num_agents_his}, num_default={self.num_default}, num_mature={self.num_mature}, num_new={self.num_new_join}")
-        # print(self.gev, self.epsilon)
+        print(f"tot_active={self.tot_num_agents}, tot_historical={self.tot_num_agents_his}, num_defaulted_agent={self.num_default}, num_matured={self.num_mature}, num_new_added_from_beginning_simulation={self.num_new_join}")
 
         self.datacollector.collect(self)        
         #The step() method of each agent is called here (updates the agent's state)
-        self.schedule.step()
+        #self.schedule.step()
         

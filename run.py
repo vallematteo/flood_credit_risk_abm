@@ -68,18 +68,12 @@ height = nvm.shape[1]
 
 print(f'width: {width}, height: {height}')
 
-# GEV_df = pd.read_csv(FOLDER+ '/' + 'gev_config.csv')
-
 def main(tot_step, grid_radius, acpt_score, folder, settings, repeats, add_agents):
     
     if add_agents == True: # add new agents during the run
-        # this file contains 1500 numbers/setting
-        GEV_df = pd.read_csv(FOLDER+ '/' + 'gev_config3.csv')
-        # this file contains 1000 numbers/setting
-        # GEV_df = pd.read_csv(FOLDER+ '/' + 'gev_config.csv')
+        GEV_df = pd.read_csv(FOLDER+ '/' + 'gev_config4.csv')
     else:
-        #GEV_df = pd.read_csv(FOLDER+ '/' + 'gev_config2.csv')
-        GEV_df = pd.read_csv(FOLDER+ '/' + 'gev_config3.csv') #temporary modified to 3
+        GEV_df = pd.read_csv(FOLDER+ '/' + 'gev_config3.csv') 
         
     # ORIGINAL:
     res_gev_list = GEV_df['set'+str(settings)]
@@ -121,6 +115,8 @@ def main(tot_step, grid_radius, acpt_score, folder, settings, repeats, add_agent
     for _ in range(tot_step):
         # for MV process, break if all agents are removed (without adding agents to the system)
         if model.tot_num_agents <= 0:
+            break
+        if model._steps > GEV_df.shape[0]:
             break
         model.step()
         
@@ -165,8 +161,6 @@ if __name__ == '__main__':
                         help='Repeat the same settings for ... times.')
     parser.add_argument('--add_agents', action='store_false',
                         help='Default: add new agents, with this action, can test without adding new agents')
-    # parser.add_argument('--no_flood', action='store_true',
-    #                     help='Default: create flood events. in conparison, put this no flood situation where completely no flood happens. ')
     args = parser.parse_args()
     kwargs = vars(args)
     # kargs returns a dict:{var name: var value}

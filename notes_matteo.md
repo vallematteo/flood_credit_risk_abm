@@ -66,8 +66,36 @@ income ~ lognormal
 seniority ~ uniform looking at age distribution in the netherlands
 r_cap ~ uniform 
 
+
+
+
 TO DO:
 For next time series results of the kolmogorov complexity.
+THINK ABOUT:
 Climate gentrification is the following phenomena:
 Initialization now it's random, but if we modify it so that people do NOT join severely hit area it's more realistic. leading to progresssive abandon of the peripheral areas (also severely hitten) of the region.
 Would be nice to disentagle the effect of the flood itself in terms of income and property damage and the network effect that dives the prices of the houses down.
+
+
+### Meeting 13 Dec 2024
+final version for the parameter initialization:
+-----new_join == False: (initial agents)-----
+v, sp = nvm_kde.sample(1)[0] #housing market data kde
+income = burr.rvs(c=3.30, d=0.45, loc=-12.76, scale=3101.46)
+r_cap = burr.rvs(c=9.42, d=0.14, loc=-0.11, scale=73.40)
+seniority = np.random.beta(a=0.88, b=2.79) * 606.34 + 1.0
+
+TO DO:
+- Run the Kolmogorov Complexity via BDM analysis
+- (add a stopping parameter)
+- read carefully calibrated pd meaning: "calibrated PD is not clear the meaning of calibrated ??"
+- Meaning of kolmogorov complexity: explaination and application sto a system such as and ABM
+- how many agents default by hard margin and how many default by soft margin
+- think about parallelization, especially the JAX RL by jakob foerster's lab
+
+### Results folders tracker
+- test 3 
+- test 4 600 steps reps 10 and gevconfig3.csv used to store the result of the new way to initialize agents
+- test 6 1200 steps, reps = 1 and gevconfig4.csv = 600 set1 and then divergent
+
+

@@ -1,4 +1,4 @@
-import numpy as np
+import numpy as np #type: ignore
 
 def density_preprocess(map):
     '''
@@ -48,7 +48,7 @@ def find_coordi(rv, density_slots, coordinates):
         return coordinates[low]
     
 
-    # Function to calculate EMI
+    # Function to calculate EMI (used for new joiners)
 def calculate_emi(principal, annual_interest_rate, loan_tenure_years = 10):
     r = annual_interest_rate / (12 * 100)  # Monthly interest rate
     n = loan_tenure_years * 12  # Total number of monthly installments
